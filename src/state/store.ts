@@ -10,7 +10,13 @@ import {
   type BoardData,
 } from './persistence.js';
 import type { Mode } from '../types.js';
-import type { Priority } from './persistence.js';
+import type { Priority, Card } from './persistence.js';
+
+type UndoEntry = {
+  card: Card;
+  laneIndex: number;
+  cardIndex: number;
+};
 
 export interface AppState {
   // board data
@@ -41,6 +47,9 @@ export interface AppState {
   // filter
   priorityFilter: Priority | 'all';
 
+  // undo stack (for card deletions)
+  undoStack: UndoEntry[];
+
   // derived helpers
   lanes: () => Lane[];
   settings: () => Settings;
@@ -66,6 +75,7 @@ export interface AppState {
   // card actions
   addCard: (title: string) => void;
   deleteCard: () => void;
+  undoDelete: () => void;
   moveCard: (direction: 'left' | 'right') => void;
   moveCardVertical: (direction: 'up' | 'down') => void;
   saveDetails: () => void;
@@ -116,6 +126,7 @@ export const useStore = create<AppState>((set, get) => {
     lanesCursor: 0,
     settingsCursor: 0,
     priorityFilter: 'all',
+    undoStack: [],
 
     // derived
     lanes: () => get().boardData.lanes,
@@ -186,8 +197,9 @@ export const useStore = create<AppState>((set, get) => {
     },
 
     deleteCard: () => {
-      const { activeLane, activeCard, boardData } = get();
+      const { activeLane, activeCard, boardData, undoStack } = get();
       if (boardData.lanes[activeLane]!.cards.length === 0) return;
+      const deletedCard = boardData.lanes[activeLane]!.cards[activeCard]!;
       set({
         boardData: {
           ...boardData,
@@ -198,6 +210,38 @@ export const useStore = create<AppState>((set, get) => {
           ),
         },
         activeCard: Math.min(activeCard, boardData.lanes[activeLane]!.cards.length - 2),
+        undoStack: [
+          ...undoStack,
+          { card: deletedCard, laneIndex: activeLane, cardIndex: activeCard },
+        ],
+      });
+    },
+
+    undoDelete: () => {
+      const { undoStack, boardData } = get();
+      if (undoStack.length === 0) return;
+      const entry = undoStack[undoStack.length - 1]!;
+      const laneIdx = Math.min(entry.laneIndex, boardData.lanes.length - 1);
+      const cardIdx = Math.min(entry.cardIndex, boardData.lanes[laneIdx]!.cards.length);
+      set({
+        boardData: {
+          ...boardData,
+          lanes: boardData.lanes.map((lane, i) =>
+            i === laneIdx
+              ? {
+                  ...lane,
+                  cards: [
+                    ...lane.cards.slice(0, cardIdx),
+                    entry.card,
+                    ...lane.cards.slice(cardIdx),
+                  ],
+                }
+              : lane,
+          ),
+        },
+        activeLane: laneIdx,
+        activeCard: cardIdx,
+        undoStack: undoStack.slice(0, -1),
       });
     },
 

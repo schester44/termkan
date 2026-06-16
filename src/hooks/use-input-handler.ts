@@ -274,6 +274,7 @@ export function useInputHandler(exit: () => void) {
       }
     }
     if (input === 'd') store.deleteCard();
+    if (input === 'u') store.undoDelete();
     if (input === 'p') store.cyclePriority();
   });
 }

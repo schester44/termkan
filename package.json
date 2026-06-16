@@ -13,7 +13,8 @@
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
-    "format:check": "prettier --check src/"
+    "format:check": "prettier --check src/",
+    "prepare": "husky"
   },
   "keywords": [
     "kanban",
@@ -36,11 +37,19 @@
     "typescript": "^6.0.3",
     "zustand": "^5.0.14"
   },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
     "prettier": "^3.8.4",
     "typescript-eslint": "^8.61.0"
   }

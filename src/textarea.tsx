@@ -285,7 +285,7 @@ export default function TextArea({ value, onChange, focus = true, onExit, vimMod
 			{vimMode && (
 				<Box marginTop={1}>
 					<Text dimColor color={currentMode === "insert" ? "green" : currentMode === "visual" || currentMode === "visual-line" ? "magenta" : "blue"}>
-						{currentMode.toUpperCase()}
+						-- {currentMode.toUpperCase()} --
 					</Text>
 					{vimCtx.statusMessage && !vimCtx.statusMessage.startsWith("--") && (
 						<Text color={vimCtx.statusError ? "red" : "white"}> {vimCtx.statusMessage}</Text>

@@ -283,7 +283,7 @@ export default function TextArea({ value, onChange, focus = true, onExit, vimMod
 
 			{/* Mode indicator */}
 			{vimMode && (
-				<Box justifyContent="flex-end" marginTop={1}>
+				<Box marginTop={1}>
 					<Text dimColor color={currentMode === "insert" ? "green" : currentMode === "visual" || currentMode === "visual-line" ? "magenta" : "blue"}>
 						{currentMode.toUpperCase()}
 					</Text>

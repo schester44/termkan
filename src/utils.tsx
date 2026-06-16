@@ -1,10 +1,26 @@
 import React from "react";
 import { Text } from "ink";
 
-// Consistent color mapping for tags
+// Preset tag colors for common tags
+const PRESET_TAG_COLORS: Record<string, string> = {
+	"#bug": "red",
+	"#fix": "red",
+	"#fixme": "red",
+	"#todo": "yellow",
+	"#hack": "yellow",
+	"#wip": "yellow",
+	"#feat": "green",
+	"#done": "green",
+	"#note": "cyan",
+	"#idea": "magenta",
+};
+
+// Consistent color mapping for non-preset tags
 const TAG_COLORS = ["cyan", "magenta", "green", "yellow", "blue", "red", "white"] as const;
 
 function tagColor(tag: string): string {
+	const preset = PRESET_TAG_COLORS[tag.toLowerCase()];
+	if (preset) return preset;
 	let hash = 0;
 	for (let i = 0; i < tag.length; i++) hash = ((hash << 5) - hash + tag.charCodeAt(i)) | 0;
 	return TAG_COLORS[Math.abs(hash) % TAG_COLORS.length]!;

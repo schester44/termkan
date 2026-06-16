@@ -69,7 +69,7 @@ export function HelpPanel() {
         {/* Column 3: Views */}
         <Section title="Views">
           <ShortcutEntry keys="B" label="Boards" />
-          <ShortcutEntry keys="L" label="Lanes" />
+          <ShortcutEntry keys="E" label="Edit lanes" />
           <ShortcutEntry keys="S" label="Settings" />
           <ShortcutEntry keys="A" label="Archive" />
           <ShortcutEntry keys="$" label="Rename board" />

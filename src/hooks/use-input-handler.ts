@@ -57,7 +57,7 @@ export function useInputHandler(exit: () => void) {
     }
 
     if (store.mode === 'lanes') {
-      if (key.escape || input === 'L') {
+      if (key.escape || input === 'E') {
         store.setMode('navigate');
         return;
       }
@@ -188,7 +188,7 @@ export function useInputHandler(exit: () => void) {
       store.setSettingsCursor(0);
       store.setMode('archive');
     }
-    if (input === 'L') {
+    if (input === 'E') {
       store.setLanesCursor(store.activeLane);
       store.setMode('lanes');
     }

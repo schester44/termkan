@@ -1,12 +1,14 @@
 import React from "react";
 import { Box, Text } from "ink";
 import { highlightMatch } from "../utils.js";
+import type { Priority } from "../state/persistence.js";
 
 interface CardProps {
 	title: string;
 	isSelected: boolean;
 	hasDetails: boolean;
 	searchQuery: string;
+	priority?: Priority;
 	maxContentLines?: number;
 }
 
@@ -21,24 +23,37 @@ function truncateToLines(text: string, maxLines: number, lineWidth: number): str
 	return text.slice(0, maxChars - 1) + "…";
 }
 
-export function Card({ title, isSelected, hasDetails, searchQuery, maxContentLines = 3 }: CardProps) {
+const PRIORITY_INDICATOR: Record<Priority, { icon: string; color: string }> = {
+	high:   { icon: "🔴", color: "red" },
+	medium: { icon: "🟡", color: "yellow" },
+	low:    { icon: "🔵", color: "blue" },
+	none:   { icon: "",   color: "" },
+};
+
+export function Card({ title, isSelected, hasDetails, searchQuery, priority = "none", maxContentLines = 3 }: CardProps) {
 	const isMatch = searchQuery && (
 		title.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 
 	const prefix = isSelected ? "▸ " : "  ";
+	const prio = PRIORITY_INDICATOR[priority];
+	const prioPrefix = prio.icon ? prio.icon + " " : "";
 	const suffix = hasDetails ? " 📝" : "";
 	const displayTitle = truncateToLines(title, maxContentLines, 40) + suffix;
+
+	const borderColor = priority !== "none" && isSelected
+		? prio.color
+		: isSelected ? "yellow" : "gray";
 
 	return (
 		<Box
 			borderStyle="round"
-			borderColor={isSelected ? "yellow" : "gray"}
+			borderColor={borderColor}
 			paddingX={1}
 			marginBottom={0}
 		>
 			<Text bold={isSelected} wrap="wrap">
-				{prefix}
+				{prefix}{prioPrefix}
 				{isMatch ? highlightMatch(displayTitle, searchQuery) : displayTitle}
 			</Text>
 		</Box>

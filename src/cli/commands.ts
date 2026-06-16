@@ -1,6 +1,6 @@
 import {
 	loadMeta, saveBoard, saveMeta, listBoards,
-	type Card, type Comment,
+	type Card, type Comment, type Priority,
 } from "../state/persistence.js";
 import {
 	resolveBoard, jsonMode, json, out, error,
@@ -20,6 +20,7 @@ export function cmdStatus(): void {
 				id: c.id,
 				title: c.title,
 				hasDetails: c.details.length > 0,
+				priority: c.priority ?? "none",
 				comments: (c.comments ?? []).length,
 			})),
 		})),
@@ -78,6 +79,7 @@ export function cmdCards(args: string[]): void {
 			title: c.title,
 			lane: lane.name,
 			hasDetails: c.details.length > 0,
+			priority: c.priority ?? "none",
 			comments: (c.comments ?? []).length,
 		}))
 	);
@@ -160,7 +162,7 @@ export function cmdAdd(args: string[]): void {
 	const laneIdx = findLaneByName(data, laneName);
 	const details = flags["details"] ?? "";
 
-	const newCard: Card = { id: data.nextId, title, details, comments: [] };
+	const newCard: Card = { id: data.nextId, title, details, comments: [], priority: "none" };
 	data.nextId++;
 	data.lanes[laneIdx]!.cards.push(newCard);
 	saveBoard(key, data);
@@ -318,6 +320,29 @@ export function cmdUse(args: string[]): void {
 	);
 }
 
+export function cmdPriority(args: string[]): void {
+	const positional = getPositionalArgs(args);
+	const idStr = positional[0];
+	const level = positional[1];
+	const validLevels = ["high", "medium", "low", "none"];
+	if (!idStr || !level) error("Usage: tk priority <card-id> <high|medium|low|none>");
+	if (!validLevels.includes(level)) error(`Invalid priority "${level}". Use: ${validLevels.join(", ")}`);
+	const id = parseInt(idStr, 10);
+	if (isNaN(id)) error("Card ID must be a number");
+
+	const { key, data } = resolveBoard();
+	const found = findCardById(data, id);
+	if (!found) error(`Card #${id} not found`);
+
+	found.card.priority = level as Priority;
+	saveBoard(key, data);
+
+	out(
+		`${green("\u2713")} Set ${bold(`#${found.card.id}`)} priority to ${level}`,
+		{ ok: true, id: found.card.id, priority: level },
+	);
+}
+
 export function cmdComment(args: string[]): void {
 	const positional = getPositionalArgs(args);
 	const idStr = positional[0];
@@ -373,6 +398,7 @@ ${bold("Commands:")}
   ${yellow("update")} ${dim("<id>")} ${dim("[options]")}   Update a card
     ${dim("--title <text>")}          New title
     ${dim("--details <text>")}        New details
+  ${yellow("priority")} ${dim("<id> <level>")}       Set card priority (high, medium, low, none)
   ${yellow("comment")} ${dim("<id> <text>")} ${dim("[options]")}  Add a comment to a card
     ${dim("--author <name>")}        Comment author
   ${yellow("rm")} ${dim("<id>")}                   Delete a card

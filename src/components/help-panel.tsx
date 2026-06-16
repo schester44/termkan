@@ -54,6 +54,7 @@ export function HelpPanel() {
 					<ShortcutEntry keys="d" label="Delete card" />
 					<ShortcutEntry keys="H/L" label="Move card left/right" />
 					<ShortcutEntry keys="J/K" label="Move card up/down" />
+					<ShortcutEntry keys="p" label="Cycle priority" />
 				</Section>
 
 				{/* Column 3: Views */}

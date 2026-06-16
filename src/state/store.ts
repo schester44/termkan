@@ -61,6 +61,7 @@ export interface AppState {
 	saveDetails: () => void;
 	openDetail: () => void;
 	addComment: (text: string, author?: string) => void;
+	cyclePriority: () => void;
 
 	// lane actions
 	addLane: (name: string) => void;
@@ -147,7 +148,7 @@ export const useStore = create<AppState>((set, get) => {
 		// card actions
 		addCard: (title) => {
 			const { activeLane, boardData } = get();
-			const newCard = { id: boardData.nextId, title, details: "", comments: [] };
+			const newCard = { id: boardData.nextId, title, details: "", comments: [], priority: "none" as const };
 			set({
 				boardData: {
 					...boardData,
@@ -236,6 +237,26 @@ export const useStore = create<AppState>((set, get) => {
 				),
 			}));
 			set({ mode: "navigate" });
+		},
+
+		cyclePriority: () => {
+			const { activeLane, activeCard } = get();
+			const cycle: Record<string, string> = { none: "high", high: "medium", medium: "low", low: "none" };
+			get().updateBoard((prev) => ({
+				...prev,
+				lanes: prev.lanes.map((lane, li) =>
+					li === activeLane
+						? {
+								...lane,
+								cards: lane.cards.map((card, ci) =>
+									ci === activeCard
+										? { ...card, priority: (cycle[card.priority ?? "none"] ?? "none") as any }
+										: card
+								),
+							}
+						: lane
+				),
+			}));
 		},
 
 		addComment: (text, author) => {

@@ -84,6 +84,7 @@ export function LaneColumn({ lane, laneIndex, laneWidth, isLast = false, maxHeig
 							title={card.title}
 							isSelected={isActive && actualIndex === activeCard}
 							hasDetails={card.details.length > 0}
+							priority={card.priority}
 							searchQuery={searchQuery}
 						/>
 					);

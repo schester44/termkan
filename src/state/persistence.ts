@@ -7,11 +7,14 @@ export type Comment = {
 	author?: string;
 };
 
+export type Priority = "high" | "medium" | "low" | "none";
+
 export type Card = {
 	id: number;
 	title: string;
 	details: string;
 	comments: Comment[];
+	priority: Priority;
 };
 
 export type Lane = {
@@ -96,6 +99,7 @@ export function loadBoard(key: string): BoardData {
 				cards: lane.cards.map((card) => ({
 					...card,
 					comments: card.comments ?? [],
+					priority: card.priority ?? "none",
 				})),
 			})),
 			settings: { ...DEFAULT_SETTINGS, ...data.settings },

@@ -214,5 +214,6 @@ export function useInputHandler(exit: () => void) {
 		if (input === "J") store.moveCardVertical("down");
 		if (input === "K") store.moveCardVertical("up");
 		if (input === "d") store.deleteCard();
+		if (input === "p") store.cyclePriority();
 	});
 }

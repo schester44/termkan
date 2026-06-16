@@ -47,6 +47,16 @@ tk update <card-id> --details "New details" --json
 tk rm <card-id> --json
 ```
 
+## Priority
+
+```bash
+# Set card priority
+tk priority <card-id> high --json
+tk priority <card-id> medium --json
+tk priority <card-id> low --json
+tk priority <card-id> none --json
+```
+
 ## Comments
 
 ```bash

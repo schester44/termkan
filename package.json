@@ -9,7 +9,11 @@
   "scripts": {
     "start": "yarn tsx src/app.tsx",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/"
   },
   "keywords": [
     "kanban",
@@ -31,5 +35,13 @@
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.5.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "prettier": "^3.8.4",
+    "typescript-eslint": "^8.61.0"
   }
 }

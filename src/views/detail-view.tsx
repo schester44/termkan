@@ -59,11 +59,10 @@ export function DetailView() {
 
   const detailHints = currentSettings.vimMode ? (
     <Text dimColor>
-      Vim keybindings enabled{'  '}
       <Text bold color="yellow">
         :q
       </Text>{' '}
-      save &amp; back{'  '}
+      back{'  '}
       <Text bold color="yellow">
         E
       </Text>{' '}

@@ -89,7 +89,7 @@ tk use my-project                  # switch active board
 
 ## Data Storage
 
-Board data is stored in `.termkan/` in the current working directory:
+Board data is stored in `~/.termkan/`:
 
 ```
 .termkan/

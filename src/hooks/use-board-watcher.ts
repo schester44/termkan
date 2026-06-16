@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { useStore } from "../state/store.js";
 import { loadBoard } from "../state/persistence.js";
 
-const DATA_DIR = path.join(process.cwd(), ".termkan");
+const DATA_DIR = path.join(os.homedir(), ".termkan");
 const BOARDS_DIR = path.join(DATA_DIR, "boards");
 
 /**

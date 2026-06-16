@@ -86,7 +86,7 @@ tk                  # run (linked via npm link)
 
 ## Data
 
-Boards are stored as JSON files in `.termkan/boards/` relative to cwd. Each board file contains `{ nextId, name, lanes[], settings }`. Cards contain `{ id, title, details, comments[] }` where comments have `{ text, timestamp, author? }`. The `meta.json` tracks the last active board.
+Boards are stored as JSON files in `~/.termkan/boards/`. Each board file contains `{ nextId, name, lanes[], settings }`. Cards contain `{ id, title, details, comments[] }` where comments have `{ text, timestamp, author? }`. The `meta.json` tracks the last active board.
 
 ## Key Conventions
 

@@ -46,8 +46,21 @@ export function useBoardWatcher() {
 					// Only update if data actually changed
 					const newJson = JSON.stringify(newData);
 					const currentJson = JSON.stringify(currentData);
-					if (newJson !== currentJson) {
-						useStore.setState({ boardData: newData });
+						if (newJson !== currentJson) {
+						// Skip updates while in detail/edit modes to avoid breaking the view
+						const mode = useStore.getState().mode;
+						if (mode === "detail" || mode === "add" || mode === "rename") return;
+
+						// Clamp active indices to stay within bounds
+						const { activeLane, activeCard } = useStore.getState();
+						const clampedLane = Math.min(activeLane, newData.lanes.length - 1);
+						const clampedCard = Math.min(activeCard, Math.max(0, (newData.lanes[clampedLane]?.cards.length ?? 1) - 1));
+
+						useStore.setState({
+							boardData: newData,
+							activeLane: clampedLane,
+							activeCard: clampedCard,
+						});
 					}
 				} catch {
 					// File might be mid-write, ignore

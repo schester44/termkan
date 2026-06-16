@@ -3,7 +3,7 @@ import { globalArgs, jsonMode, error } from "./helpers.js";
 import {
 	cmdBoards, cmdCards, cmdDetail,
 	cmdAdd, cmdMove, cmdDone, cmdUpdate, cmdDelete,
-	cmdComment, cmdPriority, cmdNew, cmdUse, cmdHelp,
+	cmdComment, cmdPriority, cmdArchive, cmdNew, cmdUse, cmdHelp,
 } from "./commands.js";
 
 migrateOldBoard();
@@ -21,6 +21,7 @@ const SUBCOMMANDS: Record<string, (args: string[]) => void | "open"> = {
 	mv: cmdMove,
 	comment: cmdComment,
 	priority: cmdPriority,
+	archive: cmdArchive,
 	new: (args) => { if (cmdNew(args) === "open") return "open"; },
 	use: cmdUse,
 	help: () => cmdHelp(),

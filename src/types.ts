@@ -10,4 +10,5 @@ export type Mode =
 	| "new-board"
 	| "lanes"
 	| "new-lane"
-	| "rename-lane";
+	| "rename-lane"
+	| "archive";

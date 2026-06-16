@@ -123,6 +123,21 @@ export function useInputHandler(exit: () => void) {
 			return;
 		}
 
+		if (store.mode === "archive") {
+			if (key.escape || input === "a") {
+				store.setMode("navigate");
+				return;
+			}
+			if (key.upArrow || input === "k") {
+				store.setSettingsCursor((prev) => Math.max(0, prev - 1));
+			}
+			if (key.downArrow || input === "j") {
+				const archiveLen = store.boardData.archive?.length ?? 0;
+				store.setSettingsCursor((prev) => Math.min(archiveLen - 1, prev + 1));
+			}
+			return;
+		}
+
 		if (store.mode === "search") {
 			if (key.escape) {
 				store.setMode("navigate");
@@ -160,6 +175,10 @@ export function useInputHandler(exit: () => void) {
 			store.setBoardsList(boards);
 			store.setBoardsCursor(Math.max(0, boards.indexOf(store.boardKey)));
 			store.setMode("boards");
+		}
+		if (input === "a") {
+			store.setSettingsCursor(0);
+			store.setMode("archive");
 		}
 		if (input === "e") {
 			store.setLanesCursor(store.activeLane);
@@ -222,6 +241,13 @@ export function useInputHandler(exit: () => void) {
 			const next = (store.activeLane - 1 + lanes.length) % lanes.length;
 			store.setActiveLane(next);
 			store.setActiveCard((c) => Math.min(c, Math.max(0, lanes[next]!.cards.length - 1)));
+		}
+		if (input === "g") store.setActiveCard(0);
+		if (input === "G") store.setActiveCard(Math.max(0, lanes[store.activeLane]!.cards.length - 1));
+		if (input === "f") {
+			const cycle = { all: "high", high: "medium", medium: "low", low: "none", none: "all" } as const;
+			const next = cycle[store.priorityFilter as keyof typeof cycle];
+			useStore.setState({ priorityFilter: next });
 		}
 		if (input === "d") store.deleteCard();
 		if (input === "p") store.cyclePriority();

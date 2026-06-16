@@ -7,7 +7,7 @@ import { HelpPanel } from "../components/help-panel.js";
 
 export function BoardView() {
 	const {
-		mode, boardName, inputValue, searchValue, searchQuery,
+		mode, boardName, inputValue, searchValue, searchQuery, priorityFilter,
 		setInputValue, setSearchValue, setSearchQuery,
 		renameBoard, findNext, lanes,
 	} = useStore();
@@ -89,6 +89,9 @@ export function BoardView() {
 						Press <Text bold color="yellow">?</Text> for help
 						{searchQuery ? (
 							<Text>{"  "}<Text bold color="yellow">n</Text>/<Text bold color="yellow">N</Text> next/prev result</Text>
+						) : null}
+						{priorityFilter !== "all" ? (
+							<Text>{"  "}filter: <Text bold color={priorityFilter === "high" ? "red" : priorityFilter === "medium" ? "yellow" : priorityFilter === "low" ? "blue" : "white"}>{priorityFilter}</Text> <Text dimColor>(<Text bold color="yellow">f</Text> to change)</Text></Text>
 						) : null}
 					</Text>
 				) : mode === "search" ? (

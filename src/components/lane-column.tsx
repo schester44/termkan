@@ -14,9 +14,14 @@ interface LaneColumnProps {
 }
 
 export function LaneColumn({ lane, laneIndex, laneWidth, isLast = false, maxHeight = 24 }: LaneColumnProps) {
-	const { activeLane, activeCard, mode, inputValue, searchQuery, setInputValue, addCard } = useStore();
+	const { activeLane, activeCard, mode, inputValue, searchQuery, priorityFilter, setInputValue, addCard } = useStore();
 	const isActive = laneIndex === activeLane;
-	const totalCards = lane.cards.length;
+
+	// Filter cards by priority if a filter is active
+	const filteredCards = priorityFilter === "all"
+		? lane.cards
+		: lane.cards.filter((c) => (c.priority ?? "none") === priorityFilter);
+	const totalCards = filteredCards.length;
 
 	// Height budget for the card content area
 	// Lane box chrome: border (2) + header+margin (2) + indicators (2) = 6
@@ -45,7 +50,10 @@ export function LaneColumn({ lane, laneIndex, laneWidth, isLast = false, maxHeig
 	// Slice to only render cards that should be visible
 	const renderStart = isActive ? scrollOffset : 0;
 	const renderEnd = renderStart + maxVisible;
-	const visibleCards = lane.cards.slice(renderStart, renderEnd);
+	const visibleCards = filteredCards.slice(renderStart, renderEnd);
+
+	// Map filtered card back to its original index in lane.cards
+	const originalIndex = (card: typeof lane.cards[0]) => lane.cards.indexOf(card);
 
 	const hiddenAbove = renderStart;
 	const hiddenBelow = Math.max(0, totalCards - renderEnd);
@@ -77,12 +85,12 @@ export function LaneColumn({ lane, laneIndex, laneWidth, isLast = false, maxHeig
 
 			<Box flexDirection="column" flexGrow={1} overflow="hidden">
 				{visibleCards.map((card, i) => {
-					const actualIndex = renderStart + i;
+					const origIdx = originalIndex(card);
 					return (
 						<Card
 							key={card.id}
 							title={card.title}
-							isSelected={isActive && actualIndex === activeCard}
+							isSelected={isActive && origIdx === activeCard}
 							hasDetails={card.details.length > 0}
 							priority={card.priority}
 							searchQuery={searchQuery}
@@ -90,7 +98,7 @@ export function LaneColumn({ lane, laneIndex, laneWidth, isLast = false, maxHeig
 					);
 				})}
 
-				{lane.cards.length === 0 && (
+				{filteredCards.length === 0 && (
 					<Box justifyContent="center">
 						<Text dimColor italic>
 							empty

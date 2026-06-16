@@ -124,7 +124,8 @@ export function cmdAdd(args: string[]): void {
 	const laneIdx = findLaneByName(data, laneName);
 	const details = flags["details"] ?? "";
 
-	const newCard: Card = { id: data.nextId, title, details, comments: [], priority: "none" };
+	const now = new Date().toISOString();
+	const newCard: Card = { id: data.nextId, title, details, comments: [], priority: "none", createdAt: now, updatedAt: now };
 	data.nextId++;
 	data.lanes[laneIdx]!.cards.push(newCard);
 	saveBoard(key, data);
@@ -197,6 +198,7 @@ export function cmdUpdate(args: string[]): void {
 
 	if (flags["title"] !== undefined) found.card.title = flags["title"];
 	if (flags["details"] !== undefined) found.card.details = flags["details"];
+	found.card.updatedAt = new Date().toISOString();
 	saveBoard(key, data);
 
 	const jsonData = {
@@ -253,6 +255,7 @@ export function cmdNew(args: string[]): "open" | "done" {
 			{ name: "Done", cards: [] },
 		],
 		settings: { vimMode: true },
+		archive: [],
 	});
 	saveMeta({ lastBoard: key });
 
@@ -341,6 +344,49 @@ export function cmdComment(args: string[]): void {
 	);
 }
 
+export function cmdArchive(args: string[]): void {
+	const flags = parseFlags(args);
+	const { key, data } = resolveBoard();
+
+	if (args.includes("--list") || args.includes("-l")) {
+		const archive = data.archive ?? [];
+		if (jsonMode) { json({ board: key, archived: archive }); return; }
+		if (archive.length === 0) {
+			process.stdout.write(dim("No archived cards.") + "\n");
+			return;
+		}
+		const lines: string[] = [cyan(`📦 Archive (${archive.length})`), ""];
+		for (const c of archive) {
+			lines.push(`  ${dim(`#${c.id}`)} ${c.title} ${dim(`[${c.fromLane}] ${new Date(c.archivedAt).toLocaleDateString()}`)}`);
+		}
+		process.stdout.write(lines.join("\n") + "\n");
+		return;
+	}
+
+	// Archive all cards from the last lane (Done)
+	const lastLane = data.lanes[data.lanes.length - 1]!;
+	if (lastLane.cards.length === 0) {
+		out(dim("No cards to archive."), { ok: true, archived: 0 });
+		return;
+	}
+
+	const now = new Date().toISOString();
+	const toArchive = lastLane.cards.map((c) => ({
+		...c,
+		archivedAt: now,
+		fromLane: lastLane.name,
+	}));
+
+	data.archive = [...(data.archive ?? []), ...toArchive];
+	lastLane.cards = [];
+	saveBoard(key, data);
+
+	out(
+		`${green("✓")} Archived ${bold(String(toArchive.length))} card(s) from ${cyan(lastLane.name)}`,
+		{ ok: true, archived: toArchive.length, lane: lastLane.name },
+	);
+}
+
 export function cmdHelp(): void {
 	const help = `${bold("tk")} - terminal kanban board
 
@@ -363,6 +409,8 @@ ${bold("Commands:")}
   ${yellow("comment")} ${dim("<id> <text>")} ${dim("[options]")}  Add a comment to a card
     ${dim("--author <name>")}        Comment author
   ${yellow("rm")} ${dim("<id>")}                   Delete a card
+  ${yellow("archive")}                     Archive all done cards
+  ${yellow("archive")} ${dim("--list")}              List archived cards
   ${yellow("new")} ${dim("<board>")} ${dim("[-d]")}          Create a new board (-d: detached, don't open TUI)
   ${yellow("use")} ${dim("<board>")}               Switch active board
 

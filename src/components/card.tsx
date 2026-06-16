@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Text } from "ink";
-import { highlightMatch } from "../utils.js";
+import { highlightMatch, renderWithTags } from "../utils.js";
 import type { Priority } from "../state/persistence.js";
 
 interface CardProps {
@@ -54,7 +54,7 @@ export function Card({ title, isSelected, hasDetails, searchQuery, priority = "n
 		>
 			<Text bold={isSelected} wrap="wrap">
 				{prefix}{prioPrefix}
-				{isMatch ? highlightMatch(displayTitle, searchQuery) : displayTitle}
+				{isMatch ? highlightMatch(displayTitle, searchQuery) : renderWithTags(displayTitle)}
 			</Text>
 		</Box>
 	);

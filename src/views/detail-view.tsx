@@ -98,6 +98,15 @@ export function DetailView() {
 					</Text>
 				</Box>
 
+				<Box marginBottom={1} gap={2}>
+					<Text dimColor>
+						Created: {new Date(currentCard.createdAt).toLocaleString()}
+					</Text>
+					<Text dimColor>
+						Updated: {new Date(currentCard.updatedAt).toLocaleString()}
+					</Text>
+				</Box>
+
 				<Box marginBottom={1}>
 					<Text bold dimColor>Details:</Text>
 				</Box>

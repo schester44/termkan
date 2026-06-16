@@ -45,6 +45,7 @@ export function HelpPanel() {
 					<ShortcutEntry keys="j/k" label="Select card" />
 					<ShortcutEntry keys={`1-${laneCount}`} label="Jump to lane" />
 					<ShortcutEntry keys="/" label="Search cards" />
+					<ShortcutEntry keys="f" label="Filter by priority" />
 					<ShortcutEntry keys="Enter" label="Open card details" />
 				</Section>
 
@@ -62,6 +63,7 @@ export function HelpPanel() {
 					<ShortcutEntry keys="b" label="Boards" />
 					<ShortcutEntry keys="e" label="Edit lanes" />
 					<ShortcutEntry keys="s" label="Settings" />
+					<ShortcutEntry keys="a" label="Archive" />
 					<ShortcutEntry keys="$" label="Rename board" />
 					<ShortcutEntry keys="?" label="Help" />
 					<ShortcutEntry keys="q" label="Quit" />

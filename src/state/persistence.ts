@@ -15,6 +15,8 @@ export type Card = {
 	details: string;
 	comments: Comment[];
 	priority: Priority;
+	createdAt: string;
+	updatedAt: string;
 };
 
 export type Lane = {
@@ -26,11 +28,17 @@ export type Settings = {
 	vimMode: boolean;
 };
 
+export type ArchivedCard = Card & {
+	archivedAt: string;
+	fromLane: string;
+};
+
 export type BoardData = {
 	nextId: number;
 	name: string;
 	lanes: Lane[];
 	settings: Settings;
+	archive: ArchivedCard[];
 };
 
 export type Meta = {
@@ -51,6 +59,7 @@ function defaultBoard(key: string): BoardData {
 			{ name: "Done", cards: [] },
 		],
 		settings: { ...DEFAULT_SETTINGS },
+		archive: [],
 	};
 }
 
@@ -96,13 +105,19 @@ export function loadBoard(key: string): BoardData {
 			...data,
 			lanes: (data.lanes || []).map((lane) => ({
 				...lane,
-				cards: lane.cards.map((card) => ({
-					...card,
-					comments: card.comments ?? [],
-					priority: card.priority ?? "none",
-				})),
+				cards: lane.cards.map((card) => {
+					const now = new Date().toISOString();
+					return {
+						...card,
+						comments: card.comments ?? [],
+						priority: card.priority ?? "none",
+						createdAt: card.createdAt ?? now,
+						updatedAt: card.updatedAt ?? now,
+					};
+				}),
 			})),
 			settings: { ...DEFAULT_SETTINGS, ...data.settings },
+			archive: data.archive ?? [],
 		};
 	} catch {
 		return defaultBoard(key);

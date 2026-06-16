@@ -4,6 +4,7 @@ import {
 	type Lane, type Settings, type BoardData,
 } from "./persistence.js";
 import type { Mode } from "../types.js";
+import type { Priority } from "./persistence.js";
 
 export interface AppState {
 	// board data
@@ -30,6 +31,9 @@ export interface AppState {
 
 	// settings
 	settingsCursor: number;
+
+	// filter
+	priorityFilter: Priority | "all";
 
 	// derived helpers
 	lanes: () => Lane[];
@@ -104,6 +108,7 @@ export const useStore = create<AppState>((set, get) => {
 		boardsCursor: 0,
 		lanesCursor: 0,
 		settingsCursor: 0,
+		priorityFilter: "all",
 
 		// derived
 		lanes: () => get().boardData.lanes,
@@ -148,7 +153,8 @@ export const useStore = create<AppState>((set, get) => {
 		// card actions
 		addCard: (title) => {
 			const { activeLane, boardData } = get();
-			const newCard = { id: boardData.nextId, title, details: "", comments: [], priority: "none" as const };
+			const now = new Date().toISOString();
+			const newCard = { id: boardData.nextId, title, details: "", comments: [], priority: "none" as const, createdAt: now, updatedAt: now };
 			set({
 				boardData: {
 					...boardData,
@@ -230,7 +236,7 @@ export const useStore = create<AppState>((set, get) => {
 						? {
 								...lane,
 								cards: lane.cards.map((card, ci) =>
-									ci === activeCard ? { ...card, details: detailsValue } : card
+									ci === activeCard ? { ...card, details: detailsValue, updatedAt: new Date().toISOString() } : card
 								),
 							}
 						: lane

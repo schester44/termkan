@@ -18,6 +18,7 @@ async function startTUI() {
 	const { LanesEditor } = await import("./views/lanes-editor.js");
 	const { SettingsView } = await import("./views/settings-view.js");
 	const { DetailView } = await import("./views/detail-view.js");
+	const { ArchiveView } = await import("./views/archive-view.js");
 
 	// migrate old single-file format
 	migrateOldBoard();
@@ -47,6 +48,10 @@ async function startTUI() {
 
 		if (mode === "settings") {
 			return React.createElement(SettingsView);
+		}
+
+		if (mode === "archive") {
+			return React.createElement(ArchiveView);
 		}
 
 		if (mode === "detail") {

@@ -86,9 +86,15 @@ export function DetailView() {
 					</Text>
 				</Box>
 
-				<Box marginBottom={1}>
+				<Box marginBottom={1} gap={2}>
 					<Text dimColor>
 						Lane: <Text color="cyan">{boardLanes[activeLane]!.name}</Text>
+					</Text>
+					<Text dimColor>
+						Priority: {currentCard.priority === "high" ? <Text color="red">🔴 high</Text>
+							: currentCard.priority === "medium" ? <Text color="yellow">🟡 medium</Text>
+							: currentCard.priority === "low" ? <Text color="blue">🔵 low</Text>
+							: <Text>none</Text>}
 					</Text>
 				</Box>
 

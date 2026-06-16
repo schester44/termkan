@@ -260,18 +260,6 @@ export default function TextArea({ value, onChange, focus = true, onExit, vimMod
 
 	return (
 		<Box flexDirection="column">
-			{/* Mode indicator */}
-			{vimMode && (
-				<Box marginBottom={1}>
-					<Text bold color={currentMode === "insert" ? "green" : currentMode === "visual" || currentMode === "visual-line" ? "magenta" : "blue"}>
-						-- {currentMode.toUpperCase()} --
-					</Text>
-					{vimCtx.statusMessage && !vimCtx.statusMessage.startsWith("--") && (
-						<Text color={vimCtx.statusError ? "red" : "white"}> {vimCtx.statusMessage}</Text>
-					)}
-				</Box>
-			)}
-
 			{value === "" ? (
 				<Text dimColor>{vimMode && currentMode !== "insert" ? "█ Press i to start typing..." : "█ Start typing..."}</Text>
 			) : (
@@ -291,6 +279,18 @@ export default function TextArea({ value, onChange, focus = true, onExit, vimMod
 					}
 					return <Text key={i}>{line ? styledLine(line) : " "}</Text>;
 				})
+			)}
+
+			{/* Mode indicator */}
+			{vimMode && (
+				<Box justifyContent="flex-end" marginTop={1}>
+					<Text dimColor color={currentMode === "insert" ? "green" : currentMode === "visual" || currentMode === "visual-line" ? "magenta" : "blue"}>
+						{currentMode.toUpperCase()}
+					</Text>
+					{vimCtx.statusMessage && !vimCtx.statusMessage.startsWith("--") && (
+						<Text color={vimCtx.statusError ? "red" : "white"}> {vimCtx.statusMessage}</Text>
+					)}
+				</Box>
 			)}
 		</Box>
 	);

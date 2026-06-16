@@ -32,6 +32,9 @@ tk add "Card title" --json
 # Add to a specific lane with details
 tk add "Card title" --lane "In Progress" --details "Description here" --json
 
+# Add with priority
+tk add "Card title" --priority high --json
+
 # Move a card to a different lane
 tk move <card-id> --to "In Progress" --json
 

@@ -6,6 +6,8 @@ A fast, keyboard-driven kanban board that lives in your terminal. Built with Rea
 
 ```bash
 npm install -g termkan
+# or
+yarn global add termkan
 ```
 
 ## Quick Start

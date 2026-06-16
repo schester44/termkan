@@ -3,53 +3,60 @@ import { tryRunCli } from "./cli/index.js";
 // handle CLI subcommands (status, add, move, etc.) before launching TUI
 if (tryRunCli()) process.exit(0);
 
-import React, { useEffect } from "react";
-import { render, useApp } from "ink";
-import { migrateOldBoard } from "./state/persistence.js";
-import { useStore } from "./state/store.js";
-import { useInputHandler } from "./hooks/use-input-handler.js";
-import { useBoardWatcher } from "./hooks/use-board-watcher.js";
-import { BoardView } from "./views/board-view.js";
-import { BoardsPicker } from "./views/boards-picker.js";
-import { LanesEditor } from "./views/lanes-editor.js";
-import { SettingsView } from "./views/settings-view.js";
-import { DetailView } from "./views/detail-view.js";
+// Dynamic import so the store initializes AFTER CLI commands run
+// (e.g. `tk new` writes meta before the store reads it)
+async function startTUI() {
+	const React = await import("react");
+	const { useEffect } = React;
+	const { render, useApp } = await import("ink");
+	const { migrateOldBoard } = await import("./state/persistence.js");
+	const { useStore } = await import("./state/store.js");
+	const { useInputHandler } = await import("./hooks/use-input-handler.js");
+	const { useBoardWatcher } = await import("./hooks/use-board-watcher.js");
+	const { BoardView } = await import("./views/board-view.js");
+	const { BoardsPicker } = await import("./views/boards-picker.js");
+	const { LanesEditor } = await import("./views/lanes-editor.js");
+	const { SettingsView } = await import("./views/settings-view.js");
+	const { DetailView } = await import("./views/detail-view.js");
 
-// migrate old single-file format
-migrateOldBoard();
+	// migrate old single-file format
+	migrateOldBoard();
 
-function KanbanBoard() {
-	const { exit } = useApp();
-	const mode = useStore((s) => s.mode);
-	const persist = useStore((s) => s.persist);
-	const boardKey = useStore((s) => s.boardKey);
-	const boardData = useStore((s) => s.boardData);
+	function KanbanBoard() {
+		const { exit } = useApp();
+		const mode = useStore((s) => s.mode);
+		const persist = useStore((s) => s.persist);
+		const boardKey = useStore((s) => s.boardKey);
+		const boardData = useStore((s) => s.boardData);
 
-	useInputHandler(exit);
-	useBoardWatcher();
+		useInputHandler(exit);
+		useBoardWatcher();
 
-	// persist on every change
-	useEffect(() => {
-		persist();
-	}, [boardData, boardKey]);
+		// persist on every change
+		useEffect(() => {
+			persist();
+		}, [boardData, boardKey]);
 
-	if (mode === "lanes" || mode === "new-lane" || mode === "rename-lane") {
-		return <LanesEditor />;
+		if (mode === "lanes" || mode === "new-lane" || mode === "rename-lane") {
+			return React.createElement(LanesEditor);
+		}
+
+		if (mode === "boards" || mode === "new-board") {
+			return React.createElement(BoardsPicker);
+		}
+
+		if (mode === "settings") {
+			return React.createElement(SettingsView);
+		}
+
+		if (mode === "detail") {
+			return React.createElement(DetailView);
+		}
+
+		return React.createElement(BoardView);
 	}
 
-	if (mode === "boards" || mode === "new-board") {
-		return <BoardsPicker />;
-	}
-
-	if (mode === "settings") {
-		return <SettingsView />;
-	}
-
-	if (mode === "detail") {
-		return <DetailView />;
-	}
-
-	return <BoardView />;
+	render(React.createElement(KanbanBoard));
 }
 
-render(<KanbanBoard />);
+startTUI();

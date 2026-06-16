@@ -22,6 +22,12 @@ export function useBoardWatcher() {
 	useEffect(() => {
 		const filePath = path.join(BOARDS_DIR, `${boardKey}.json`);
 
+		// Ensure the file exists before watching (new boards may not be persisted yet)
+		if (!fs.existsSync(filePath)) {
+			fs.mkdirSync(BOARDS_DIR, { recursive: true });
+			fs.writeFileSync(filePath, JSON.stringify(useStore.getState().boardData, null, 2) + "\n");
+		}
+
 		let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 		const watcher = fs.watch(filePath, { persistent: false }, (eventType) => {

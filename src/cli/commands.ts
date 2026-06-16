@@ -288,7 +288,7 @@ export function cmdNew(args: string[]): "open" | "done" {
 			{ name: "In Progress", cards: [] },
 			{ name: "Done", cards: [] },
 		],
-		settings: { vimMode: false },
+		settings: { vimMode: true },
 	});
 	saveMeta({ lastBoard: key });
 

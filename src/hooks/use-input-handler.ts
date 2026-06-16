@@ -178,7 +178,7 @@ export function useInputHandler(exit: () => void) {
     }
     if (input === 'q') exit();
     if (input === '?') store.setMode('help');
-    if (input === 'B' || (input === 'k' && (key.meta || key.ctrl))) {
+    if (input === 'B') {
       const boards = listBoards();
       store.setBoardsList(boards);
       store.setBoardsCursor(Math.max(0, boards.indexOf(store.boardKey)));

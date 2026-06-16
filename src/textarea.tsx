@@ -110,6 +110,32 @@ export default function TextArea({ value, onChange, focus = true, onExit, vimMod
 					return { mapped: input, ctrl: false };
 				};
 
+				// Arrow keys in insert mode — handle directly since vimee doesn't
+				if (vimCtx.mode === "insert" && (key.upArrow || key.downArrow || key.leftArrow || key.rightArrow)) {
+					const buf = bufferRef.current;
+					const lines = buf.getContent().split("\n");
+					const { line, col } = vimCtx.cursor;
+					let newLine = line;
+					let newCol = col;
+					if (key.leftArrow) {
+						newCol = Math.max(0, col - 1);
+					} else if (key.rightArrow) {
+						newCol = Math.min((lines[line] ?? "").length, col + 1);
+					} else if (key.upArrow) {
+						if (line > 0) {
+							newLine = line - 1;
+							newCol = Math.min(col, (lines[newLine] ?? "").length);
+						}
+					} else if (key.downArrow) {
+						if (line < lines.length - 1) {
+							newLine = line + 1;
+							newCol = Math.min(col, (lines[newLine] ?? "").length);
+						}
+					}
+					setVimCtx({ ...vimCtx, cursor: { line: newLine, col: newCol } });
+					return;
+				}
+
 				// Esc in normal mode exits
 				if (key.escape && vimCtx.mode === "normal") {
 					onExit?.();

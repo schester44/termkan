@@ -66,6 +66,7 @@ function boardFile(key: string): string {
 }
 
 export function loadMeta(): Meta {
+	ensureDirs();
 	try {
 		const raw = fs.readFileSync(META_FILE, "utf-8");
 		return JSON.parse(raw) as Meta;
@@ -80,6 +81,7 @@ export function saveMeta(meta: Meta): void {
 }
 
 export function loadBoard(key: string): BoardData {
+	ensureDirs();
 	try {
 		const raw = fs.readFileSync(boardFile(key), "utf-8");
 		const data = JSON.parse(raw) as BoardData;

@@ -1,0 +1,66 @@
+import { useEffect, useRef } from "react";
+import fs from "node:fs";
+import path from "node:path";
+import { useStore } from "../state/store.js";
+import { loadBoard } from "../state/persistence.js";
+
+const DATA_DIR = path.join(process.cwd(), ".turncan");
+const BOARDS_DIR = path.join(DATA_DIR, "boards");
+
+/**
+ * Watches the current board's JSON file for external changes
+ * and reloads the board data when modified outside of this process.
+ */
+export function useBoardWatcher() {
+	const boardKey = useStore((s) => s.boardKey);
+	const lastWriteRef = useRef<number>(0);
+
+	// Expose a way for persist to mark "we just wrote"
+	const persist = useStore((s) => s.persist);
+
+	useEffect(() => {
+		const filePath = path.join(BOARDS_DIR, `${boardKey}.json`);
+
+		let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+		const watcher = fs.watch(filePath, { persistent: false }, (eventType) => {
+			if (eventType !== "change") return;
+
+			// Debounce rapid changes
+			if (debounceTimer) clearTimeout(debounceTimer);
+			debounceTimer = setTimeout(() => {
+				// Skip if we wrote recently (within 500ms)
+				if (Date.now() - lastWriteRef.current < 500) return;
+
+				try {
+					const newData = loadBoard(boardKey);
+					const currentData = useStore.getState().boardData;
+
+					// Only update if data actually changed
+					const newJson = JSON.stringify(newData);
+					const currentJson = JSON.stringify(currentData);
+					if (newJson !== currentJson) {
+						useStore.setState({ boardData: newData });
+					}
+				} catch {
+					// File might be mid-write, ignore
+				}
+			}, 100);
+		});
+
+		// Patch persist to track our own writes
+		const originalPersist = useStore.getState().persist;
+		const patchedPersist = () => {
+			lastWriteRef.current = Date.now();
+			originalPersist();
+		};
+		useStore.setState({ persist: patchedPersist });
+
+		return () => {
+			watcher.close();
+			if (debounceTimer) clearTimeout(debounceTimer);
+			// Restore original persist
+			useStore.setState({ persist: originalPersist });
+		};
+	}, [boardKey]);
+}

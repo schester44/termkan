@@ -1,0 +1,122 @@
+import React, { useState, useEffect } from "react";
+import { Box, Text } from "ink";
+import TextInput from "ink-text-input";
+import { Card } from "./card.js";
+import { useStore } from "../state/store.js";
+import type { Lane } from "../state/persistence.js";
+
+interface LaneColumnProps {
+	lane: Lane;
+	laneIndex: number;
+	laneWidth: number;
+	isLast?: boolean;
+	maxHeight?: number;
+}
+
+export function LaneColumn({ lane, laneIndex, laneWidth, isLast = false, maxHeight = 24 }: LaneColumnProps) {
+	const { activeLane, activeCard, mode, inputValue, searchQuery, setInputValue, addCard } = useStore();
+	const isActive = laneIndex === activeLane;
+	const totalCards = lane.cards.length;
+
+	// Height budget for the card content area
+	// Lane box chrome: border (2) + header+margin (2) + indicators (2) = 6
+	const addInputHeight = mode === "add" && isActive ? 3 : 0;
+	const contentHeight = maxHeight - 6 - addInputHeight;
+
+	// Rough estimate: 5 lines per card (border top, up to 3 content lines, border bottom)
+	// Used to decide how many cards to render — overflow="hidden" is the safety net
+	const maxVisible = Math.max(1, Math.floor(contentHeight / 5));
+
+	// Scroll offset — how many cards to skip from the top
+	const [scrollOffset, setScrollOffset] = useState(0);
+
+	useEffect(() => {
+		if (!isActive) {
+			setScrollOffset(0);
+			return;
+		}
+		setScrollOffset((prev) => {
+			if (activeCard < prev) return activeCard;
+			if (activeCard >= prev + maxVisible) return activeCard - maxVisible + 1;
+			return prev;
+		});
+	}, [activeCard, isActive, maxVisible]);
+
+	// Slice to only render cards that should be visible
+	const renderStart = isActive ? scrollOffset : 0;
+	const renderEnd = renderStart + maxVisible;
+	const visibleCards = lane.cards.slice(renderStart, renderEnd);
+
+	const hiddenAbove = renderStart;
+	const hiddenBelow = Math.max(0, totalCards - renderEnd);
+
+	return (
+		<Box
+			flexDirection="column"
+			width={laneWidth}
+			height={maxHeight}
+			borderStyle={isActive ? "double" : "single"}
+			borderColor={isActive ? "cyan" : "gray"}
+			marginRight={isLast ? 0 : 1}
+			paddingX={1}
+		>
+			<Box justifyContent="center" marginBottom={1}>
+				<Text bold color={isActive ? "cyan" : "white"}>
+					<Text dimColor>{laneIndex + 1}.</Text> {lane.name}
+					{totalCards > 0 ? <Text dimColor> ({totalCards})</Text> : null}
+				</Text>
+			</Box>
+
+			{hiddenAbove > 0 ? (
+				<Box justifyContent="center">
+					<Text dimColor>▲ {hiddenAbove} more</Text>
+				</Box>
+			) : (
+				<Box height={1} />
+			)}
+
+			<Box flexDirection="column" flexGrow={1} overflow="hidden">
+				{visibleCards.map((card, i) => {
+					const actualIndex = renderStart + i;
+					return (
+						<Card
+							key={card.id}
+							title={card.title}
+							isSelected={isActive && actualIndex === activeCard}
+							hasDetails={card.details.length > 0}
+							searchQuery={searchQuery}
+						/>
+					);
+				})}
+
+				{lane.cards.length === 0 && (
+					<Box justifyContent="center">
+						<Text dimColor italic>
+							empty
+						</Text>
+					</Box>
+				)}
+			</Box>
+
+			{hiddenBelow > 0 ? (
+				<Box justifyContent="center">
+					<Text dimColor>▼ {hiddenBelow} more</Text>
+				</Box>
+			) : (
+				<Box height={1} />
+			)}
+
+			{mode === "add" && isActive && (
+				<Box marginTop={1} borderStyle="round" borderColor="green" paddingX={1}>
+					<TextInput
+						value={inputValue}
+						onChange={setInputValue}
+						onSubmit={(val) => val.trim() && addCard(val.trim())}
+						placeholder="Card title..."
+						focus={true}
+					/>
+				</Box>
+			)}
+		</Box>
+	);
+}

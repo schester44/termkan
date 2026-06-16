@@ -1,6 +1,6 @@
 node_modules
 dist
-.turncan
+.termkan
 board.json
 .yarn
 .pnp.*

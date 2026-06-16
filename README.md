@@ -89,10 +89,10 @@ tk use my-project                  # switch active board
 
 ## Data Storage
 
-Board data is stored in `.turncan/` in the current working directory:
+Board data is stored in `.termkan/` in the current working directory:
 
 ```
-.turncan/
+.termkan/
 ├── meta.json              # last active board
 └── boards/
     ├── default.json

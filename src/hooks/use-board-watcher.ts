@@ -4,7 +4,7 @@ import path from "node:path";
 import { useStore } from "../state/store.js";
 import { loadBoard } from "../state/persistence.js";
 
-const DATA_DIR = path.join(process.cwd(), ".turncan");
+const DATA_DIR = path.join(process.cwd(), ".termkan");
 const BOARDS_DIR = path.join(DATA_DIR, "boards");
 
 /**

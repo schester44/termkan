@@ -51,7 +51,7 @@ function defaultBoard(key: string): BoardData {
 	};
 }
 
-const DATA_DIR = path.join(process.cwd(), ".turncan");
+const DATA_DIR = path.join(process.cwd(), ".termkan");
 const BOARDS_DIR = path.join(DATA_DIR, "boards");
 const META_FILE = path.join(DATA_DIR, "meta.json");
 

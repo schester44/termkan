@@ -16,7 +16,7 @@ const PRESET_TAG_COLORS: Record<string, string> = {
 };
 
 // Consistent color mapping for non-preset tags
-const TAG_COLORS = ["cyan", "magenta", "green", "yellow", "blue", "red", "white"] as const;
+const TAG_COLORS = ["cyan", "magenta", "green", "yellow", "blue"] as const;
 
 function tagColor(tag: string): string {
 	const preset = PRESET_TAG_COLORS[tag.toLowerCase()];

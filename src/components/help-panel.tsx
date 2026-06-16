@@ -63,7 +63,7 @@ export function HelpPanel() {
           <ShortcutEntry keys="H/L" label="Move card left/right" />
           <ShortcutEntry keys="J/K" label="Move card up/down" />
           <ShortcutEntry keys="p" label="Cycle priority" />
-          <ShortcutEntry keys="r" label="Rename card" />
+          <ShortcutEntry keys="r/R" label="Rename card" />
         </Section>
 
         {/* Column 3: Views */}

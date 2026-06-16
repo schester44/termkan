@@ -183,7 +183,7 @@ export const useStore = create<AppState>((set, get) => {
 							: lane
 					),
 				},
-				activeCard: Math.max(0, activeCard - 1),
+				activeCard: Math.min(activeCard, boardData.lanes[activeLane]!.cards.length - 2),
 			});
 		},
 

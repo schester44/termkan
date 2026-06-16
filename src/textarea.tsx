@@ -228,7 +228,7 @@ export default function TextArea({ value, onChange, focus = true, onExit, vimMod
 			)}
 
 			{value === "" ? (
-				<Text dimColor>{vimMode ? "█ Press i to start typing..." : "█ Start typing..."}</Text>
+				<Text dimColor>{vimMode && currentMode !== "insert" ? "█ Press i to start typing..." : "█ Start typing..."}</Text>
 			) : (
 				lines.map((line, i) => {
 					if (i === cursorPos.line) {

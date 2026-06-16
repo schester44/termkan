@@ -107,7 +107,26 @@ export function DetailView() {
               onChange={setRenameValue}
               onSubmit={(val) => {
                 if (val.trim()) {
-                  useStore.getState().renameCard(val.trim());
+                  const { activeLane, activeCard } = useStore.getState();
+                  useStore.getState().updateBoard((prev) => ({
+                    ...prev,
+                    lanes: prev.lanes.map((lane, li) =>
+                      li === activeLane
+                        ? {
+                            ...lane,
+                            cards: lane.cards.map((card, ci) =>
+                              ci === activeCard
+                                ? {
+                                    ...card,
+                                    title: val.trim(),
+                                    updatedAt: new Date().toISOString(),
+                                  }
+                                : card,
+                            ),
+                          }
+                        : lane,
+                    ),
+                  }));
                 }
                 setRenameValue('');
                 setRenameMode(false);

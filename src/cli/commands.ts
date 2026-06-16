@@ -117,7 +117,7 @@ export function cmdAdd(args: string[]): void {
 	const flags = parseFlags(args);
 	const positional = getPositionalArgs(args);
 	const title = positional[0];
-	if (!title) error("Usage: tk add <title> [--lane <name>] [--details <text>]");
+	if (!title) error("Usage: tk add <title> [--lane <name>] [--details <text>] [--priority <high|medium|low|none>]");
 
 	const { key, data } = resolveBoard();
 	const laneName = flags["lane"] ?? data.lanes[0]!.name;
@@ -125,7 +125,10 @@ export function cmdAdd(args: string[]): void {
 	const details = flags["details"] ?? "";
 
 	const now = new Date().toISOString();
-	const newCard: Card = { id: data.nextId, title, details, comments: [], priority: "none", createdAt: now, updatedAt: now };
+	const validPriorities = ["high", "medium", "low", "none"];
+	const priority = flags["priority"] ?? "none";
+	if (!validPriorities.includes(priority)) error(`Invalid priority "${priority}". Use: ${validPriorities.join(", ")}`);
+	const newCard: Card = { id: data.nextId, title, details, comments: [], priority: priority as any, createdAt: now, updatedAt: now };
 	data.nextId++;
 	data.lanes[laneIdx]!.cards.push(newCard);
 	saveBoard(key, data);

@@ -45,29 +45,41 @@ function styledLine(line: string): React.ReactNode {
 }
 
 /** Apply inline markdown styling: **bold**, *italic*, `code` */
+/** Render a clickable terminal hyperlink using OSC 8 */
+function termLink(text: string, url: string): string {
+  return `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`;
+}
+
 function styledInline(text: string): React.ReactNode {
   const parts: React.ReactNode[] = [];
-  const regex = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
+  const regex = /(\[([^\]]+)\]\(([^)]+)\)|\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
   let last = 0;
   let match;
   while ((match = regex.exec(text)) !== null) {
     if (match.index > last) parts.push(text.slice(last, match.index));
-    if (match[2]) {
+    if (match[2] && match[3]) {
+      // [text](url) markdown link
       parts.push(
-        <Text key={match.index} bold>
-          {match[2]}
-        </Text>,
-      );
-    } else if (match[3]) {
-      parts.push(
-        <Text key={match.index} italic>
-          {match[3]}
+        <Text key={match.index} color="blue" underline>
+          {termLink(match[2], match[3])}
         </Text>,
       );
     } else if (match[4]) {
       parts.push(
-        <Text key={match.index} color="green">
+        <Text key={match.index} bold>
           {match[4]}
+        </Text>,
+      );
+    } else if (match[5]) {
+      parts.push(
+        <Text key={match.index} italic>
+          {match[5]}
+        </Text>,
+      );
+    } else if (match[6]) {
+      parts.push(
+        <Text key={match.index} color="green">
+          {match[6]}
         </Text>,
       );
     }
@@ -183,10 +195,7 @@ export default function TextArea({
 
       if (vimMode) {
         // Handle quit action from :q
-        const mapKey = (
-          _input: string,
-          key: Key,
-        ): { mapped: string; ctrl: boolean } => {
+        const mapKey = (_input: string, key: Key): { mapped: string; ctrl: boolean } => {
           if (key.escape) return { mapped: 'Escape', ctrl: false };
           if (key.return) return { mapped: 'Enter', ctrl: false };
           if (key.backspace || key.delete) return { mapped: 'Backspace', ctrl: false };

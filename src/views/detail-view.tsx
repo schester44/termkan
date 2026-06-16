@@ -59,8 +59,8 @@ export function DetailView() {
 
   const detailHints = currentSettings.vimMode ? (
     <Text dimColor>
-      <Text bold color="yellow">
-        :q
+      <Text bold color="red">
+        Esc
       </Text>{' '}
       back{'  '}
       <Text bold color="yellow">

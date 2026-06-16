@@ -10,18 +10,17 @@ Manage kanban boards via the `tk` CLI. All commands support `--json` for structu
 ## Reading the Board
 
 ```bash
-# Full board overview (lanes + cards)
-tk status --json
-
-# List all boards
-tk boards --json
-
-# List cards, optionally filtered by lane
+# List all cards (alias: tk ls)
 tk cards --json
+
+# Filter by lane
 tk cards --lane "To Do" --json
 
 # Get card details (by ID)
 tk detail <card-id> --json
+
+# List all boards
+tk boards --json
 ```
 
 ## Creating & Managing Cards
@@ -91,12 +90,12 @@ tk add "New task" --board my-project --json
 
 ## Workflow Guidelines
 
-1. **Always start with `tk status --json`** to understand the current board state before making changes.
+1. **Always start with `tk cards --json`** to understand the current board state before making changes.
 2. Use card IDs from the status output when moving, updating, or deleting cards.
 3. Lane names are case-insensitive (e.g., "to do" matches "To Do").
 4. Default lanes are "To Do", "In Progress", and "Done" but users may have custom lanes.
 5. When the user asks "what's left to do" or similar, read from `tk cards --lane "To Do" --json`.
 6. When marking work complete, use `tk done <id> --json` rather than `tk move <id> --to "Done" --json` unless the last lane has a different name.
-7. After making changes, confirm with `tk status --json` if the user wants to see the updated board.
+7. After making changes, confirm with `tk cards --json` if the user wants to see the updated board.
 8. Use `tk comment <id> <text> --author "agent" --json` to add progress notes or observations to cards.
 9. The board supports live-update — changes made via CLI are automatically reflected in any open TUI instance.

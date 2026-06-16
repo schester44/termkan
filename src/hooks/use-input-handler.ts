@@ -213,6 +213,16 @@ export function useInputHandler(exit: () => void) {
 		if (input === "L") store.moveCard("right");
 		if (input === "J") store.moveCardVertical("down");
 		if (input === "K") store.moveCardVertical("up");
+		if (key.tab && !key.shift) {
+			const next = (store.activeLane + 1) % lanes.length;
+			store.setActiveLane(next);
+			store.setActiveCard((c) => Math.min(c, Math.max(0, lanes[next]!.cards.length - 1)));
+		}
+		if (key.tab && key.shift) {
+			const next = (store.activeLane - 1 + lanes.length) % lanes.length;
+			store.setActiveLane(next);
+			store.setActiveCard((c) => Math.min(c, Math.max(0, lanes[next]!.cards.length - 1)));
+		}
 		if (input === "d") store.deleteCard();
 		if (input === "p") store.cyclePriority();
 	});

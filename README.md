@@ -62,11 +62,10 @@ The detail view supports vim keybindings (enabled by default). Additional shortc
 Every command supports `--json` for structured output, and `--board <name>` to target a specific board.
 
 ```bash
-tk status                          # board overview
-tk boards                          # list all boards
-tk cards                           # list all cards
+tk cards                           # list all cards (alias: tk ls)
 tk cards --lane "To Do"            # filter by lane
 tk detail 3                        # show card #3
+tk boards                          # list all boards
 
 tk add "Fix login bug"             # add to first lane
 tk add "Deploy" --lane "In Progress" --details "Ship v2"

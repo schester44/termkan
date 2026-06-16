@@ -1,7 +1,7 @@
 import { migrateOldBoard } from "../state/persistence.js";
 import { globalArgs, jsonMode, error } from "./helpers.js";
 import {
-	cmdStatus, cmdBoards, cmdCards, cmdDetail,
+	cmdBoards, cmdCards, cmdDetail,
 	cmdAdd, cmdMove, cmdDone, cmdUpdate, cmdDelete,
 	cmdComment, cmdPriority, cmdNew, cmdUse, cmdHelp,
 } from "./commands.js";
@@ -9,7 +9,6 @@ import {
 migrateOldBoard();
 
 const SUBCOMMANDS: Record<string, (args: string[]) => void | "open"> = {
-	status: () => cmdStatus(),
 	boards: () => cmdBoards(),
 	cards: cmdCards,
 	detail: cmdDetail,
@@ -18,6 +17,8 @@ const SUBCOMMANDS: Record<string, (args: string[]) => void | "open"> = {
 	done: cmdDone,
 	update: cmdUpdate,
 	rm: cmdDelete,
+	ls: cmdCards,
+	mv: cmdMove,
 	comment: cmdComment,
 	priority: cmdPriority,
 	new: (args) => { if (cmdNew(args) === "open") return "open"; },

@@ -8,44 +8,6 @@ import {
 	dim, bold, cyan, yellow, green,
 } from "./helpers.js";
 
-export function cmdStatus(): void {
-	const { key, data } = resolveBoard();
-
-	const jsonData = {
-		board: key,
-		name: data.name,
-		lanes: data.lanes.map((lane) => ({
-			name: lane.name,
-			cards: lane.cards.map((c) => ({
-				id: c.id,
-				title: c.title,
-				hasDetails: c.details.length > 0,
-				priority: c.priority ?? "none",
-				comments: (c.comments ?? []).length,
-			})),
-		})),
-	};
-
-	if (jsonMode) { json(jsonData); return; }
-
-	const lines: string[] = [];
-	lines.push(`${cyan("🗂  " + data.name)} ${dim(`[${key}]`)}`);
-	lines.push("");
-	for (const lane of data.lanes) {
-		lines.push(`  ${bold(lane.name)} ${dim(`(${lane.cards.length})`)}`);
-		if (lane.cards.length === 0) {
-			lines.push(`    ${dim("empty")}`);
-		} else {
-			for (const card of lane.cards) {
-				const detail = card.details.length > 0 ? " 📝" : "";
-				lines.push(`    ${dim(`#${card.id}`)} ${card.title}${detail}`);
-			}
-		}
-		lines.push("");
-	}
-	process.stdout.write(lines.join("\n") + "\n");
-}
-
 export function cmdBoards(): void {
 	const boards = listBoards();
 	const meta = loadMeta();
@@ -386,7 +348,6 @@ ${bold("Usage:")} tk [command] [options]
 
 ${bold("Commands:")}
   ${dim("(none)")}                    Open interactive TUI
-  ${yellow("status")}                    Show board overview
   ${yellow("boards")}                    List all boards
   ${yellow("cards")} ${dim("[--lane <name>]")}     List cards, optionally filtered by lane
   ${yellow("detail")} ${dim("<id>")}               Show card details

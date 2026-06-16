@@ -82,12 +82,12 @@ export function LaneColumn({
       width={laneWidth}
       height={maxHeight}
       borderStyle={isActive ? 'double' : 'single'}
-      borderColor={isActive ? 'red' : 'gray'}
+      borderColor={isActive ? 'cyan' : 'gray'}
       marginRight={isLast ? 0 : 1}
       paddingX={1}
     >
       <Box justifyContent="center" marginBottom={1}>
-        <Text bold color={isActive ? 'red' : 'white'}>
+        <Text bold color={isActive ? 'cyan' : 'white'}>
           <Text dimColor>{laneIndex + 1}.</Text> {lane.name}
           {totalCards > 0 ? <Text dimColor> ({totalCards})</Text> : null}
         </Text>

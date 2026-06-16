@@ -178,10 +178,6 @@ export function BoardView() {
           </Text>
         ) : null}
       </Box>
-
-      <Box justifyContent="center" marginTop={1}>
-        <Text dimColor>HELLO WORLD :)</Text>
-      </Box>
     </Box>
   );
 }

@@ -20,7 +20,7 @@ export function useInputHandler(exit: () => void) {
     }
 
     if (store.mode === 'boards') {
-      if (key.escape || input === 'b') {
+      if (key.escape || input === 'B') {
         store.setMode('navigate');
         return;
       }
@@ -57,7 +57,7 @@ export function useInputHandler(exit: () => void) {
     }
 
     if (store.mode === 'lanes') {
-      if (key.escape || input === 'e') {
+      if (key.escape || input === 'L') {
         store.setMode('navigate');
         return;
       }
@@ -107,7 +107,7 @@ export function useInputHandler(exit: () => void) {
     }
 
     if (store.mode === 'settings') {
-      if (key.escape || input === 's') {
+      if (key.escape || input === 'S') {
         store.setMode('navigate');
         return;
       }
@@ -124,7 +124,7 @@ export function useInputHandler(exit: () => void) {
     }
 
     if (store.mode === 'archive') {
-      if (key.escape || input === 'a') {
+      if (key.escape || input === 'A') {
         store.setMode('navigate');
         return;
       }
@@ -178,21 +178,21 @@ export function useInputHandler(exit: () => void) {
     }
     if (input === 'q') exit();
     if (input === '?') store.setMode('help');
-    if (input === 'b') {
+    if (input === 'B') {
       const boards = listBoards();
       store.setBoardsList(boards);
       store.setBoardsCursor(Math.max(0, boards.indexOf(store.boardKey)));
       store.setMode('boards');
     }
-    if (input === 'a') {
+    if (input === 'A') {
       store.setSettingsCursor(0);
       store.setMode('archive');
     }
-    if (input === 'e') {
+    if (input === 'L') {
       store.setLanesCursor(store.activeLane);
       store.setMode('lanes');
     }
-    if (input === 's') {
+    if (input === 'S') {
       store.setMode('settings');
       store.setSettingsCursor(0);
     }

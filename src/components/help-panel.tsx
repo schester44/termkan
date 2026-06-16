@@ -68,10 +68,10 @@ export function HelpPanel() {
 
         {/* Column 3: Views */}
         <Section title="Views">
-          <ShortcutEntry keys="b" label="Boards" />
-          <ShortcutEntry keys="e" label="Edit lanes" />
-          <ShortcutEntry keys="s" label="Settings" />
-          <ShortcutEntry keys="a" label="Archive" />
+          <ShortcutEntry keys="B" label="Boards" />
+          <ShortcutEntry keys="L" label="Lanes" />
+          <ShortcutEntry keys="S" label="Settings" />
+          <ShortcutEntry keys="A" label="Archive" />
           <ShortcutEntry keys="$" label="Rename board" />
           <ShortcutEntry keys="?" label="Help" />
           <ShortcutEntry keys="q" label="Quit" />

@@ -1,5 +1,50 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Box, Text, useInput } from "ink";
+
+/** Apply lightweight markdown styling to a line of text */
+function styledLine(line: string): React.ReactNode {
+	// Headings
+	if (line.startsWith("### ")) return <Text bold color="cyan">{line}</Text>;
+	if (line.startsWith("## ")) return <Text bold color="cyan">{line}</Text>;
+	if (line.startsWith("# ")) return <Text bold color="yellow">{line}</Text>;
+
+	// Horizontal rule
+	if (/^-{3,}$/.test(line.trim()) || /^\*{3,}$/.test(line.trim())) {
+		return <Text dimColor>{"─".repeat(40)}</Text>;
+	}
+
+	// List items
+	const listMatch = line.match(/^(\s*)([-*])\s/);
+	if (listMatch) {
+		const indent = listMatch[1];
+		const rest = line.slice(listMatch[0].length);
+		return <Text>{indent}<Text color="cyan">•</Text> {styledInline(rest)}</Text>;
+	}
+
+	return styledInline(line);
+}
+
+/** Apply inline markdown styling: **bold**, *italic*, `code` */
+function styledInline(text: string): React.ReactNode {
+	const parts: React.ReactNode[] = [];
+	const regex = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
+	let last = 0;
+	let match;
+	while ((match = regex.exec(text)) !== null) {
+		if (match.index > last) parts.push(text.slice(last, match.index));
+		if (match[2]) {
+			parts.push(<Text key={match.index} bold>{match[2]}</Text>);
+		} else if (match[3]) {
+			parts.push(<Text key={match.index} italic>{match[3]}</Text>);
+		} else if (match[4]) {
+			parts.push(<Text key={match.index} color="green">{match[4]}</Text>);
+		}
+		last = match.index + match[0].length;
+	}
+	if (last === 0) return text;
+	if (last < text.length) parts.push(text.slice(last));
+	return <>{parts}</>;
+}
 import {
 	TextBuffer,
 	createInitialContext,
@@ -244,7 +289,7 @@ export default function TextArea({ value, onChange, focus = true, onExit, vimMod
 							</Text>
 						);
 					}
-					return <Text key={i}>{line || " "}</Text>;
+					return <Text key={i}>{line ? styledLine(line) : " "}</Text>;
 				})
 			)}
 		</Box>
